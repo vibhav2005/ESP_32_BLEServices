@@ -40,7 +40,7 @@ void setup() {
   pHumidity = pservice->createCharacteristic(Humidity_Char_id ,
                                              BLECharacteristic::PROPERTY_READ 
                                             |BLECharacteristic::PROPERTY_NOTIFY );
-//  
+//sending the initial values to the charachteristics  
   pTemp->setValue((uint8_t*)&Temp , sizeof(float)); 
   pHumidity->setValue((uint8_t*)&Humidity , sizeof(float));
 

@@ -14,11 +14,13 @@ BLECharacteristic *pSsid;
 BLECharacteristic *pPass;
 BLEAdvertising *padvertising;
 
+//declaring neccessary global variables and flags 
 String ssid;
 String pass;
 static bool wifiConnected = false;
 int i;
-// Setup function
+
+// Setup function for BLE initialization
 void setup() {
   Serial.begin(115200); 
   Serial.println("BLE SERVICE BEGIN");
@@ -49,22 +51,27 @@ void setup() {
   digitalWrite(2, HIGH); // Indicate that setup is complete
 }
 
+
 // Loop function
 void loop() {
-  wifi_begin(); // Begin WiFi connection process
+  wifi_begin(); // In loo we begin with WiFi connection process
 }
 
-// Function to handle WiFi connection
+
+// Function to handle WiFi connection process 
+
 void wifi_begin() {
   
-  if(wifiConnected == false){
+  if(wifiConnected == false){     //check if the wifi is connected or not through a flag if not then it will enter the condition to retrieve necessary credentials from the client
+
+  //here's the basic logic of reading values from the client and converting it to const char* type since the begin condition does not take string as data type
   Serial.println("connecting to wifi...");
   i = 0;
   // Retrieve SSID and password from BLE characteristics
   ssid = pSsid->getValue().c_str();
   pass = pPass->getValue().c_str();
   
-  // Check if SSID or password is empty
+  // Check if SSID or password is empty as initially we created empty strings 
   if (ssid.isEmpty() || pass.isEmpty()) {
     Serial.println("No SSID or password set. Waiting for credentials...");
     delay(1000);
@@ -75,7 +82,7 @@ void wifi_begin() {
   WiFi.begin(ssid.c_str(), pass.c_str());
   
   // Wait for WiFi connection
-  
+  //Also adding a condition i so that it dosen't remain in infinite loop if credentials are wrong
   while (WiFi.status() != WL_CONNECTED&&i<10) {
     delay(1000);
     i++;
@@ -86,6 +93,7 @@ void wifi_begin() {
   // Check if WiFi is connected
   if (WiFi.status() == WL_CONNECTED) {
     wifiConnected = true;
+    
   // Indicate WiFi connection success
     Serial.println("\nWiFi Connected");
     wifi_connected();
@@ -98,6 +106,8 @@ void wifi_begin() {
   
   padvertising->start(); // Restart BLE advertising
 }
+
+//created another function when wifi connects succesfully the led blinks and it dosent get out of the loop
 void wifi_connected(){
   while(wifiConnected){
     digitalWrite(2,HIGH);
